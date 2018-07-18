@@ -1,13 +1,20 @@
 import React, { Component } from 'react'
 import { reduxForm, Field } from 'redux-form'
+import { compose } from 'redux'
+import { connect } from 'react-redux'
+import * as actions from '../../actions'
 
 class Signup extends Component {
   onSubmit = formProps => {
-    console.log(formProps)
+    const { signup, history } = this.props
+
+    signup(formProps, () => {
+      history.push('/feature')
+    })
   }
 
   render() {
-    const { handleSubmit } = this.props
+    const { handleSubmit, errorMessage } = this.props
 
     return (
       <form onSubmit={handleSubmit(this.onSubmit)}>
@@ -27,10 +34,13 @@ class Signup extends Component {
             component='input'
           />
         </fieldset>
+        <div>{errorMessage}</div>
         <button>Sign Up</button>
       </form>
     )
   }
 }
 
-export default reduxForm({ form: 'signup' })(Signup)
+const mapStateToProps = ({ auth: { errorMessage } }) => ({ errorMessage })
+
+export default compose( connect(mapStateToProps, actions), reduxForm({ form: 'signup' }) )(Signup)

@@ -1,7 +1,19 @@
-import { AUTH_USER } from './types'
+import axios from 'axios'
+import { AUTH_USER, AUTH_ERROR } from './types'
 
-export const signup = ({ email, password }) => (
-  dispatch => {
-    
+export const signup = (formProps, callback) => async dispatch => {
+  try {
+    const response = await axios.post('http://localhost:3090/signup', formProps)
+    dispatch({ 
+      type: AUTH_USER, 
+      payload: response.data.token 
+    })
+    callback()
+  } catch ({ response }) {
+    const { error } = response.data
+    dispatch({ 
+      type: AUTH_ERROR, 
+      payload: error 
+    })
   }
-)
+}
